@@ -1,1 +1,2 @@
-{}
+{:deps {medley/medley {:mvn/version "1.0.0"}} ;; causes antq to spit out suggestion
+ }
