@@ -1,4 +1,4 @@
-(ns common
+(ns common.tasks
   (:require [babashka.pods :as pods]
             [babashka.tasks :refer [clojure]]))
 
