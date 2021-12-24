@@ -1,15 +1,22 @@
 (ns common.tasks
-  (:require [babashka.pods :as pods]
-            [babashka.tasks :refer [clojure]]))
+  (:require [babashka.fs :as fs]
+            [babashka.pods :as pods]
+            [babashka.tasks :refer [clojure]]
+            [clojure.edn :as edn]))
+
+(defn source-dirs []
+  (if (fs/exists? "project.edn")
+    (-> (slurp "project.edn")
+        edn/read-string
+        (:src-dirs ["src"]))
+    ["src"]))
 
 (defn clj-kondo []
   (pods/load-pod "clj-kondo")
   (require 'pod.borkdude.clj-kondo)
-  (let [results (eval '(let [src (-> (slurp "project.edn")
-                                     edn/read-string
-                                     (:src-dirs ["src"]))]
-                         (-> (pod.borkdude.clj-kondo/run! {:lint src})
-                             (doto pod.borkdude.clj-kondo/print!))))]
+  (let [results (let [src (source-dirs)]
+                  (-> ((resolve 'pod.borkdude.clj-kondo/run!) {:lint src})
+                      (doto (resolve 'pod.borkdude.clj-kondo/print!))))]
     (when (-> results :findings seq)
       (System/exit 1))))
 
