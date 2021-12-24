@@ -1,0 +1,5 @@
+{:deps {common/tasks
+        {:local/root "."} ;; users will use git/url and git/sha here
+        }
+ :tasks {lint     common.tasks/clj-kondo
+         outdated common.tasks/antq}}
